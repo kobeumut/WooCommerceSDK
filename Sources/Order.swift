@@ -33,14 +33,14 @@ public struct Order: Mappable {
     public var couponLines: String?
     public var customer: Customer?
 
-    public init?(_ map: Map) {}
+    public init?(map: Map) {}
 
     mutating public func mapping(map: Map) {
         id <- map["id"]
         orderNumber <- map["order_number"]
-        createdAt <- (map["created_at"], ISO8601DateTransform())
-        updatedAt <- (map["updated_at"], ISO8601DateTransform())
-        completedAt <- (map["completed_at"], ISO8601DateTransform())
+        createdAt <- (map["created_at"])
+        updatedAt <- (map["updated_at"])
+        completedAt <- (map["completed_at"])
         status <- map["status"]
         currency <- map["currency"]
         total <- (map["total"], FloatTransform())
@@ -59,7 +59,7 @@ public struct Order: Mappable {
         customerIp <- map["customer_ip"]
         customerUserAgent <- map["customer_user_agent"]
         customerId <- map["customer_id"]
-        viewOrderUrl <- (map["view_order_url"], URLTransform())
+        viewOrderUrl <- (map["view_order_url"])
         lineItems <- map["line_items"]
         shippingLines <- map["shipping_lines"]
         lineItems <- map["line_items"]
@@ -69,8 +69,8 @@ public struct Order: Mappable {
         customer <- map["customer"]
     }
 
-    public static func get(id: Int, completion: (success: Bool, order: Order?) -> Void) {
+    public static func get(id: Int, completion: @escaping (_ success: Bool, _ order: Order?) -> Void) {
         let client = Client.sharedClient
-        client.get("order", id: id, completion: completion)
+        client.get(type: "order", id: id, completion: completion)
     }
 }

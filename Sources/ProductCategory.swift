@@ -11,7 +11,7 @@ public struct ProductCategory: Mappable {
     public var image: NSURL?
     public var count: Int?
 
-    public init?(_ map: Map) {}
+    public init?(map: Map) {}
 
     public init() {}
 
@@ -26,8 +26,8 @@ public struct ProductCategory: Mappable {
         count <- map["count"]
     }
 
-    public static func getAll(limit limit: Int = 10, completion: (success: Bool, orders: [ProductCategory]?) -> Void) {
+    public static func getAll(limit: Int = 10, completion: @escaping (_ success: Bool, _ orders: [ProductCategory]?) -> Void) {
         let client = Client.sharedClient
-        client.getArray(.ProductCategories, slug: "products/categories", limit: limit, completion: completion)
+        client.getArray(type: .ProductCategories, slug: "products/categories", limit: limit, completion: completion)
     }
 }

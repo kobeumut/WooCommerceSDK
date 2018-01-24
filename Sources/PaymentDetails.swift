@@ -6,7 +6,7 @@ public struct PaymentDetails: Mappable {
     public var methodTitle: String?
     public var paid: Bool?
 
-    public init?(_ map: Map) {}
+    public init?(map: Map) {}
 
     mutating public func mapping(map: Map) {
         methodId <- map["method_id"]

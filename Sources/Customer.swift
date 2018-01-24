@@ -17,32 +17,32 @@ public struct Customer: Mappable {
     public var billingAddress: Address?
     public var shippingAddress: Address?
 
-    public init?(_ map: Map) {}
+    public init?(map: Map) {}
 
     mutating public func mapping(map: Map) {
         id <- map["id"]
-        createdAt <- (map["created_at"], ISO8601DateTransform())
+        createdAt <- (map["created_at"])
         email <- map["email"]
         firstName <- map["first_name"]
         lastName <- map["last_name"]
         username <- map["username"]
         password <- map["password"]
         lastOrderId <- map["last_order_id"]
-        lastOrderDate <- (map["last_order_date"], ISO8601DateTransform())
+        lastOrderDate <- (map["last_order_date"])
         ordersCount <- map["orders_count"]
         totalSpent <- map["total_spent"]
-        avatarUrl <- (map["avatar_url"], URLTransform())
+        avatarUrl <- (map["avatar_url"])
         billingAddress <- map["billing_address"]
         shippingAddress <- map["shipping_address"]
     }
 
-    public static func get(id: Int, completion: (success: Bool, customer: Customer?) -> Void) {
+    public static func get(id: Int, completion: @escaping (_ success: Bool, _ customer: Customer?) -> Void) {
         let client = Client.sharedClient
-        client.get("customer", id: id, completion: completion)
+        client.get(type: "customer", id: id, completion: completion)
     }
 
-    public static func getOrders(customerId: Int, completion: (success: Bool, orders: [Order]?) -> Void) {
+    public static func getOrders(customerId: Int, completion: @escaping (_ success: Bool, _ orders: [Order]?) -> Void) {
         let client = Client.sharedClient
-        client.getArray(.Orders, slug: "customers/\(customerId)/orders", completion: completion)
+        client.getArray(type: .Orders, slug: "customers/\(customerId)/orders", completion: completion)
     }
 }

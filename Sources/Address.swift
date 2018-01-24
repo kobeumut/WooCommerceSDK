@@ -14,7 +14,7 @@ public struct Address: Mappable {
     public var email: String?
     public var phone: String?
 
-    public init?(_ map: Map) {}
+    public init?(map: Map) {}
 
     mutating public func mapping(map: Map) {
         firstName <- map["first_name"]

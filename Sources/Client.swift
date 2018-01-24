@@ -17,47 +17,57 @@ public class Client {
         self.consumerSecret = consumerSecret
     }
 
-    public func get<T: Mappable>(type: String, id: Int, completion: (success: Bool, value: T?) -> Void) {
-        let baseURL = NSURL(string: siteURL!)
-        let requestURL = NSURL(string: "wc-api/v3/\(type)s/\(id)", relativeToURL: baseURL)
-        let requestURLString = requestURL!.absoluteString
+    public func get<T: Mappable>(type: String, id: Int, completion: @escaping (_ success: Bool, _ value: T?) -> Void) {
+        let baseURL = URL(string: siteURL!)
+        let requestURL = URL(fileURLWithPath: "wc-api/v3/\(type)s/\(id)", relativeTo: baseURL)
+        let requestURLString = requestURL.absoluteString
 
-        guard let user = consumerKey, password = consumerSecret else {
-            completion(success: false, value: nil)
+        guard let user = consumerKey, let password = consumerSecret else {
+            completion(false, nil)
             return
         }
-
-        Alamofire.request(.GET, requestURLString)
+        Alamofire.request(requestURL)
             .authenticate(user: user, password: password)
             .responseJSON { response in
                 if response.result.isSuccess {
-                    let object = Mapper<T>().map(response.result.value![type])
-                    completion(success: true, value: object)
+                   
+                   let JSON = response.result.value as! [[String : Any]]!
+                    let object = Mapper<T>().map(JSON: JSON![0][type]! as! [String : Any])!
+                    
+                //TODO fix there
+                    completion(true, object)
                 } else {
-                    completion(success: false, value: nil)
+                    completion(false, nil)
                 }
         }
     }
 
-    public func getArray<T: Mappable>(type: RequestType, slug: String, limit: Int = 10, completion: (success: Bool, value: [T]?) -> Void) {
-        guard let url = siteURL, user = consumerKey, password = consumerSecret else {
-            completion(success: false, value: nil)
+    public func getArray<T: Mappable>(type: RequestType, slug: String, limit: Int = 10, completion: @escaping (_ success: Bool, _ value: [T]?) -> Void) {
+        guard let url = siteURL, let user = consumerKey, let password = consumerSecret else {
+            completion(false, nil)
             return
         }
 
-        let baseURL = NSURL(string: url)
-        let requestURL = NSURL(string: "wc-api/v3/\(slug)?filter[limit]=\(limit)", relativeToURL: baseURL)
+        let baseURL = URL(string: url)
+        let requestURL = URL(string: "wc-api/v3/\(slug)?filter[limit]=\(limit)", relativeTo: baseURL )
         let requestURLString = requestURL!.absoluteString
 
-        Alamofire.request(.GET, requestURLString)
+        Alamofire.request(requestURLString)
             .authenticate(user: user, password: password)
             .responseJSON { response in
                 if response.result.isSuccess {
-                    let objects = Mapper<T>().mapArray(response.result.value![type.rawValue])!
-                    completion(success: true, value: objects)
+
+                        let JSON = response.result.value as! [[String : Any]]!
+                    let objects = Mapper<T>().mapArray(JSONString: JSON![0][type.rawValue]! as! String)
+                        
+                
+                    
+
+                        completion(true, objects)
                 } else {
-                    completion(success: false, value: nil)
+                    completion(false, nil)
                 }
         }
     }
 }
+

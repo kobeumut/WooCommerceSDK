@@ -15,7 +15,7 @@ public struct LineItem: Mappable{
     public var sku: String?
     public var meta: [String: String]?
 
-    public init?(_ map: Map) {}
+    public init?(map: Map) {}
 
     mutating public func mapping(map: Map) {
         id <- map["id"]

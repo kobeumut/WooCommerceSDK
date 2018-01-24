@@ -1,6 +1,7 @@
 import Foundation
 import ObjectMapper
 
+@available(iOSApplicationExtension 10.0, *)
 public struct Product: Mappable {
     public var title: String?
     public var id: Int?
@@ -68,18 +69,18 @@ public struct Product: Mappable {
     public var buttonText: String?
     public var menuOrder: Int?
 
-    public init?(_ map: Map) {}
+    public init?(map: Map) {}
 
     mutating public func mapping(map: Map) {
         title <- map["title"]
         id <- map["id"]
-        createdAt <- (map["created_at"], ISO8601DateTransform())
-        updatedAt <- (map["updated_at"], ISO8601DateTransform())
+        createdAt <- (map["created_at"])
+        updatedAt <- (map["updated_at"])
         type <- map["type"]
         status <- map["status"]
         downloadable <- map["downloadable"]
         virtual <- map["virtual"]
-        permalink <- (map["permalink"], URLTransform())
+        permalink <- (map["permalink"])
         sku <- map["sku"]
         price <- (map["price"], FloatTransform())
         regularPrice <- (map["regular_price"], FloatTransform())
@@ -133,19 +134,19 @@ public struct Product: Mappable {
         totalSales <- map["total_sales"]
         variations <- map["variations"]
         parent <- map["parent"]
-        productUrl <- (map["product_url"], URLTransform())
+        productUrl <- (map["product_url"])
         buttonText <- map["button_text"]
         menuOrder <- map["menu_order"]
     }
 
-    public static func get(id: Int, completion: (success: Bool, product: Product?) -> Void) {
+    public static func get(id: Int, completion: @escaping (_ success: Bool, _ product: Product?) -> Void) {
         let client = Client.sharedClient
-        client.get("product", id: id, completion: completion)
+        client.get(type: "product", id: id, completion: completion)
     }
 
-    public static func getAll(byCategory category: ProductCategory, limit: Int = 10, completion: (success: Bool, orders: [Product]?) -> Void) {
+    public static func getAll(byCategory category: ProductCategory, limit: Int = 10, completion: @escaping (_ success: Bool, _ orders: [Product]?) -> Void) {
         let client = Client.sharedClient
         guard let slug = category.slug else { return }
-        client.getArray(.Products, slug: "products?filter[limit]=\(limit)?filter[category]=\(slug)", limit: limit, completion: completion)
+        client.getArray(type: .Products, slug: "products?filter[limit]=\(limit)?filter[category]=\(slug)", limit: limit, completion: completion)
     }
 }
